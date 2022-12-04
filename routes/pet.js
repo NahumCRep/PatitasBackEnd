@@ -4,6 +4,6 @@ const router = Router();
 
 const { uploadImage } = require('../controllers/cloudinary');
 
-router.post('/', uploadImage);
+router.post('/image', uploadImage);
 
 module.exports = router
