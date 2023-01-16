@@ -1,7 +1,8 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const { generateJWT } = require('../helpers/jwt');
-const { sendMail } = require('../helpers/email');
+// const { sendEmail } = require('../helpers/email');
+const { sendEmail } = require('../helpers/email-mailgun');
 
 const createUser = async (req, res) => {
     const {email, password} = req.body;
@@ -25,7 +26,7 @@ const createUser = async (req, res) => {
 
         const token = await generateJWT(user.id, user.name);
 
-        await sendMail(email);
+        sendEmail(user.name, email);
 
         res.json({
             ok: true,

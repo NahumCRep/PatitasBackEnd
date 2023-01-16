@@ -1,59 +1,46 @@
 const nodemailer = require("nodemailer");
-const path = require('path');
-const hbs = require('nodemailer-express-handlebars');
+const mailgun = require('nodemailer-mailgun-transport');
 const emailConfig = require("../config/mail-config");
-const { google } = require("googleapis");
+const hbs = require('nodemailer-express-handlebars');
+const path = require('path');
 
-// const img = require('../views/assets/patitasbanner.svg');
 
-const oAuth2Client = new google.auth.OAuth2(
-    process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET,
-    process.env.REDIRECT_URI
-  );
-  
-oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
-
-const sendMail = async (email) => {
+const sendEmail = (name, email) => {
     try {
-        const {auth, mailoptions} = emailConfig;
-        const accessToken = await oAuth2Client.getAccessToken();
-        const transport = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                ...auth,
-                accessToken
-            }
-        })
+        const { auth, mailoptions } = emailConfig;
+        const mailgunTransport = nodemailer.createTransport(mailgun(auth));
 
-        transport.use('compile',  hbs({
-            viewEngine: {
-                extName: '.handlebars',
-                partialsDir: path.join(__dirname, 'views/'),
-                layoutsDir: path.join(__dirname, 'views/'),
-                defaultLayout: false,
-            },
-            viewPath:  path.join(process.cwd(), 'views'),
-            extName: ".handlebars",
-        }))
-
-        const options = {
+        // mailgunTransport.use('compile',  hbs({
+        //     viewEngine: {
+        //         extName: '.handlebars',
+        //         partialsDir: path.join(__dirname, 'views/'),
+        //         layoutsDir: path.join(__dirname, 'views/'),
+        //         defaultLayout: false,
+        //     },
+        //     viewPath:  path.join(process.cwd(), 'views'),
+        //     extName: ".handlebars",
+        // }))
+        console.log(auth);
+        const emailOptions = {
             ...mailoptions(email, 'Patitas Registro'),
             text: 'Gracias por Registrarse en Patitas Web',
-            template: 'registration',
-            attachments: [{
-                filename: 'patitasbanner.svg',
-                path: path.join(process.cwd(), 'views', 'assets', 'patitasbanner.svg'),
-                cid: 'banner'
-          }],
+            html: '<h1>Gola</h1>'
+            // template: 'registration',
+            // context: {
+            //     name
+            // }
         }
 
-        const result = await transport.sendMail(options);
-
-        return {
-            ok: true,
-            message: "email sended correctly"
-        }
+        mailgunTransport.sendMail({
+           ...emailOptions
+        }, (err, info) => {
+            if (err) {
+                console.log(`Error: ${err}`);
+            }
+            else {
+                console.log(`Response: ${info}`);
+            }
+        });
 
     } catch (error) {
         console.log(error);
@@ -65,5 +52,5 @@ const sendMail = async (email) => {
 }
 
 module.exports = {
-    sendMail
+    sendEmail
 }
