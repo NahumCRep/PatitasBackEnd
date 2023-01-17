@@ -14,7 +14,7 @@ const oAuth2Client = new google.auth.OAuth2(
   
 oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
-const sendMail = async (name, email) => {
+const sendEmail = async (name, email) => {
     try {
         const {auth, mailoptions} = emailConfig;
         const accessToken = await oAuth2Client.getAccessToken();
@@ -63,5 +63,5 @@ const sendMail = async (name, email) => {
 }
 
 module.exports = {
-    sendMail
+    sendEmail
 }

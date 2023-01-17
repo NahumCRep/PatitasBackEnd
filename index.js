@@ -23,6 +23,7 @@ app.use(express.urlencoded({
 // routes
 app.use('/api/auth', require('./routes/auth.js'));
 app.use('/api/pet', require('./routes/pet.js'));
+app.use('/api/publication', require('./routes/publication.js'));
 
 app.listen(process.env.PORT, () => {
     console.log(`Corriendo en Puerto ${ process.env.PORT}`)
