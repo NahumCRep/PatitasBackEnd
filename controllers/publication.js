@@ -40,6 +40,26 @@ const createPublication = async (req, res = response) => {
     }
 }
 
+const updatePublication = async (req, res) => {
+    try{
+        const publicationId = req.params.id
+        const publication = req.body;
+
+        const resp = await Publication.findByIdAndUpdate(publicationId, publication); 
+        
+        res.json({
+            ok: true,
+            message: 'Publication updloaded sucessfully'
+        })
+    }catch (error){
+        console.log(error)
+        res.json({
+            ok: false,
+            message: 'Publication fail on update'
+        })
+    }
+}
+
 const getUserPublications = async (req, res = response) => {
     try {
         const user = req.params.id;
@@ -59,12 +79,32 @@ const getUserPublications = async (req, res = response) => {
     }
 }
 
+const getPublication = async (req, res = response) => {
+    try {
+        const productId = req.params.id;
+        const publication = await Publication.findById(productId);
+
+        return res.json({
+            ok: true,
+            publication: publication,
+            message: 'operation without errors'
+        });
+    } catch (error) {
+        console.error('Error - user publications', error);
+        return res.json({
+            ok: false,
+            message: error
+        });
+    }
+}
+
+
 const getPublicationsByPetType = () => {}
-const getPublication = () => {}
 
 
 module.exports = {
     createPublication,
+    updatePublication,
     getUserPublications,
     getPublicationsByPetType,
     getPublication

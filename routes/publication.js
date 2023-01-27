@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const {
     createPublication,
+    updatePublication,
     getUserPublications,
     getPublicationsByPetType,
     getPublication
@@ -12,6 +13,7 @@ router.post('/new', createPublication);
 router.get('/:id', getPublication);
 router.get('/:type', getPublicationsByPetType);
 router.get('/user/:id', getUserPublications);
-// TODO: update and delete
+router.put('/update/:id', updatePublication);
+// TODO: delete
 
 module.exports = router;
