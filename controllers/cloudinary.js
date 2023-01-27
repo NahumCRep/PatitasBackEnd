@@ -1,21 +1,22 @@
 const { reponse } = require('express');
-const { uploadCloudinaryFile } = require('../helpers/uploadCloudinaryFile.js');
+const { deleteImageFromCloudinary} = require('../helpers/uploadCloudinaryFile.js');
 
-const uploadImage = async (req, res = reponse) => {
-
-    const userID = 123456;
-
+const deleteImg = async (req, res = reponse) => {
+    const {userId, imageName} = req.body
     try {
-        // Upload the image
-        const imgFile = req.body.file;
-        const fileUploaded = await uploadCloudinaryFile({"userID": userID, "file": imgFile});
-
-        res.json(fileUploaded);
+        const res = await deleteImageFromCloudinary({userId, imageName})
+        return res.json({
+            ok: true,
+            message: 'File deleted successfuly'
+        })
     } catch (error) {
-        console.error(error);
+        console.log(error)
+        return res.json({
+            ok: false,
+            message: error
+        })
     }
-
 }
 
 
-module.exports = { uploadImage }
+module.exports = { deleteImg }

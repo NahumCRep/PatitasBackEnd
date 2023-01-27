@@ -51,4 +51,40 @@ const uploadFilesToCloudinary = async (userId, files) => {
     }
 }
 
-module.exports = { uploadCloudinaryFile, uploadFilesToCloudinary }
+const deleteImageFromCloudinary = async (fileObject) => {
+    const {userID, images} = fileObject;
+
+    const options = {
+        use_filename: true,
+        unique_filename: false,
+        overwrite: true,
+        folder: `patitas/${userID}`,
+    };
+
+    try {
+        if(Array.isArray(images)){
+            const deletePromises = images.map(image => {
+               return cloudinary.uploader.destroy(image, options)
+            });
+
+            const resp = await Promise.all(deletePromises);
+            console.log(resp);
+        }else {
+            const resp = await cloudinary.uploader.destroy(file, options);
+            console.log(resp);
+        }
+        
+        return {
+            ok: true,
+            message: 'File deleted successfuly'
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            ok: false,
+            message: 'Error on delete file'
+        };
+    }
+}
+
+module.exports = { uploadCloudinaryFile, uploadFilesToCloudinary, deleteImageFromCloudinary }
