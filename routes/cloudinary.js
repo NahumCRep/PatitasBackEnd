@@ -3,6 +3,6 @@ const { deleteImg } = require('../controllers/cloudinary');
 
 const router = Router();
 
-// router.post('/delete', deleteImg);
+router.post('/delete', deleteImg);
 
 module.exports = router;

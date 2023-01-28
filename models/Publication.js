@@ -18,8 +18,7 @@ const PublicationSchema = Schema({
         required: true
     },
     age: {
-        type: String,
-        required: true
+        type: String
     },
     ageNumber: {
         type: Number,

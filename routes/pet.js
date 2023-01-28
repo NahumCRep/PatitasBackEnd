@@ -1,9 +1,9 @@
-const { Router } = require('express');
+// const { Router } = require('express');
 
-const router = Router();
+// const router = Router();
 
-const { uploadImage } = require('../controllers/cloudinary');
+// const { uploadImage } = require('../controllers/cloudinary');
 
-router.post('/image', uploadImage);
+// router.post('/image', uploadImage);
 
-module.exports = router
+// module.exports = router

@@ -6,7 +6,7 @@ const uploadCloudinaryFile = async (fileObject) => {
     const options = {
         use_filename: true,
         unique_filename: false,
-        overwrite: true,
+        overwrite: false,
         folder: `patitas/${userID}`,
     };
 
@@ -51,32 +51,28 @@ const uploadFilesToCloudinary = async (userId, files) => {
     }
 }
 
-const deleteImageFromCloudinary = async (fileObject) => {
-    const {userID, images} = fileObject;
+const deleteImageFromCloudinary = async (userID, images) => {
 
     const options = {
-        use_filename: true,
-        unique_filename: false,
-        overwrite: true,
-        folder: `patitas/${userID}`,
+        resource_type: 'image'
     };
 
     try {
         if(Array.isArray(images)){
             const deletePromises = images.map(image => {
-               return cloudinary.uploader.destroy(image, options)
+               return cloudinary.uploader.destroy(`patitas/${userID}/${image}`, options)
             });
 
             const resp = await Promise.all(deletePromises);
             console.log(resp);
         }else {
-            const resp = await cloudinary.uploader.destroy(file, options);
+            const resp = await cloudinary.uploader.destroy(images, options);
             console.log(resp);
         }
         
         return {
             ok: true,
-            message: 'File deleted successfuly'
+            message: 'Files deleted sucessfully'
         };
     } catch (error) {
         console.log(error);
@@ -87,4 +83,20 @@ const deleteImageFromCloudinary = async (fileObject) => {
     }
 }
 
-module.exports = { uploadCloudinaryFile, uploadFilesToCloudinary, deleteImageFromCloudinary }
+const getNamesOfImages = (images) => {
+    let namesList = images.map(image => {
+        // -->>> first split - slice - join -> get image name with extension
+        // ->> second split -slice - join -> get image name without extension
+        return image.split('/').slice(-1).join('')
+                    .split('.').slice(0,1).join('')
+    })
+   
+   return namesList;
+}
+
+module.exports = { 
+    uploadCloudinaryFile, 
+    uploadFilesToCloudinary, 
+    deleteImageFromCloudinary,
+    getNamesOfImages
+}
