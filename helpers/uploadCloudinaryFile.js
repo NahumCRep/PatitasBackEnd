@@ -66,7 +66,7 @@ const deleteImageFromCloudinary = async (userID, images) => {
             const resp = await Promise.all(deletePromises);
             console.log(resp);
         }else {
-            const resp = await cloudinary.uploader.destroy(images, options);
+            const resp = await cloudinary.uploader.destroy(`patitas/${userID}/${images}`, options);
             console.log(resp);
         }
         
@@ -84,14 +84,21 @@ const deleteImageFromCloudinary = async (userID, images) => {
 }
 
 const getNamesOfImages = (images) => {
-    let namesList = images.map(image => {
-        // -->>> first split - slice - join -> get image name with extension
-        // ->> second split -slice - join -> get image name without extension
-        return image.split('/').slice(-1).join('')
-                    .split('.').slice(0,1).join('')
-    })
-   
-   return namesList;
+    
+    if(Array.isArray(images)){
+        let namesList = images.map(image => {
+            // -->>> first split - slice - join -> get image name with extension
+            // ->> second split -slice - join -> get image name without extension
+            return image.split('/').slice(-1).join('')
+                        .split('.').slice(0,1).join('')
+        })
+
+        return namesList;
+    }
+    
+    
+    return images.split('/').slice(-1).join('')
+                .split('.').slice(0,1).join('');   
 }
 
 module.exports = { 

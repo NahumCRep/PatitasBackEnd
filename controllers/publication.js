@@ -52,8 +52,19 @@ const updatePublication = async (req, res) => {
         const publicationStored = await Publication.findById(publicationId)
 
         if (publication.image !== publicationStored.image) {
-            // TODO: delete prev image from cloudinary and upload the new
-            console.log('nueva imagen de perfil');
+            // delete stored image
+            const imageToDelete = getNamesOfImages(publicationStored.image)
+            await deleteImageFromCloudinary(
+                publication.publication_user,
+                imageToDelete
+            );
+            // upload new image
+            const newProfileImage = await uploadFilesToCloudinary(
+                publication.publication_user,
+                publication.image
+            );
+
+            publication.image = newProfileImage.url;
         }
 
         // Verify extra images ..............................
@@ -90,7 +101,7 @@ const updatePublication = async (req, res) => {
             // -->>> deleting no needed images of database publication 
             if (imagesToDelete.length > 0) {
                 const imagesNames = getNamesOfImages(imagesToDelete)
-                console.log('name', imagesNames)
+
                 await deleteImageFromCloudinary(
                     publication.publication_user,
                     imagesNames
@@ -99,7 +110,6 @@ const updatePublication = async (req, res) => {
         }
 
         const resp = await Publication.findByIdAndUpdate(publicationId, publication); 
-        console.log(resp);
 
         res.json({
             ok: true,
