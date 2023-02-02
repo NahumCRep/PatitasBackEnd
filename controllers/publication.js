@@ -124,6 +124,29 @@ const updatePublication = async (req, res) => {
     }
 }
 
+const deletePublication = async (req, res) => {
+    try {
+        const publicationId = req.params.id;
+        const {image, extra_images, publication_user} = await Publication.findById(publicationId);
+
+        const imageNames = getNamesOfImages([image, ...extra_images]);
+        await deleteImageFromCloudinary(publication_user, imageNames);
+
+        const resp = await Publication.findByIdAndDelete(publicationId);
+
+        res.json({
+            ok: true,
+            message: 'Publicacion eliminada correctamente'
+        })
+    } catch (error) {
+        res.json({
+            ok: false,
+            message: 'Ocurrio un error al eliminar publicacion',
+            error: error
+        })
+    }
+}
+
 const getUserPublications = async (req, res = response) => {
     try {
         const user = req.params.id;
@@ -169,6 +192,7 @@ const getPublicationsByPetType = () => { }
 module.exports = {
     createPublication,
     updatePublication,
+    deletePublication,
     getUserPublications,
     getPublicationsByPetType,
     getPublication

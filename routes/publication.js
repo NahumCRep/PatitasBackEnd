@@ -2,6 +2,7 @@ const { Router } = require('express');
 const {
     createPublication,
     updatePublication,
+    deletePublication,
     getUserPublications,
     getPublicationsByPetType,
     getPublication
@@ -14,6 +15,6 @@ router.get('/:id', getPublication);
 router.get('/:type', getPublicationsByPetType);
 router.get('/user/:id', getUserPublications);
 router.put('/update/:id', updatePublication);
-// TODO: delete
+router.delete('/delete/:id', deletePublication);
 
 module.exports = router;
