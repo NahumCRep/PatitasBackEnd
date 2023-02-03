@@ -44,7 +44,8 @@ const PublicationSchema = Schema({
     },
     is_adopted: {
         type: Boolean,
-        required: true
+        required: true,
+        default: false
     },
     image: {
         type: String,
