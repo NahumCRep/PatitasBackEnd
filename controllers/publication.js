@@ -113,13 +113,13 @@ const updatePublication = async (req, res) => {
 
         res.json({
             ok: true,
-            message: 'Publication updloaded sucessfully'
+            message: 'Publicacion actualizada con exito'
         })
     } catch (error) {
         console.log(error)
         res.json({
             ok: false,
-            message: 'Publication fail on update'
+            message: 'Error al actualizar la publicacion'
         })
     }
 }
