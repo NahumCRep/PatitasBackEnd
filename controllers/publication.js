@@ -168,8 +168,8 @@ const getUserPublications = async (req, res = response) => {
 
 const getPublication = async (req, res = response) => {
     try {
-        const productId = req.params.id;
-        const publication = await Publication.findById(productId);
+        const publicationId = req.params.id;
+        const publication = await Publication.findById(publicationId);
 
         return res.json({
             ok: true,
@@ -185,8 +185,41 @@ const getPublication = async (req, res = response) => {
     }
 }
 
+const getPublicationsByPetType = async (req, res) => {
+    try {
+        const petType = req.params.type;
+        const page = req.params.page || 1;   
 
-const getPublicationsByPetType = () => { }
+        let searchParams = {};
+        if(req.params.province){
+            searchParams = {
+                pet_type: petType, 
+                is_adopted: false,
+                "location.province": req.params.province
+            }
+        }else {
+            searchParams = {
+                pet_type: petType, 
+                is_adopted: false,
+            }
+        }
+
+        const options = {
+            limit: 10, 
+            page:page
+        }
+
+        const resp = await Publication.paginate(searchParams, options);
+        return res.json(resp);
+        
+    } catch (error) {
+        res.json({
+            ok:false,
+            message: error
+        })
+    }
+
+}
 
 
 module.exports = {
