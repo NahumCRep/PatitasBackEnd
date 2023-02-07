@@ -165,6 +165,20 @@ const getUserPublications = async (req, res = response) => {
         });
     }
 }
+ const getUserLikedPublications = async (req, res) => {
+    try {
+        const user = req.params.id;
+        const likedPublications = await Publication.paginate({ likes: user });
+
+        return res.json(likedPublications);
+    } catch (error) {
+        console.error('Error - user publications', error);
+        return res.json({
+            ok: false,
+            message: error
+        });
+    }
+ }
 
 const getPublication = async (req, res = response) => {
     try {
@@ -221,12 +235,41 @@ const getPublicationsByPetType = async (req, res) => {
 
 }
 
+const handleLike = async (req, res) => {
+    try {
+        const publication = await Publication.findById(req.params.id);
+        const user = req.body.userId;
+
+        if(!publication.likes.includes(user)){
+            await publication.updateOne({$push: {likes: user}});
+            res.status(200).json({
+                ok: true,
+                message: 'like asignado correctamente'
+            })
+        }else{
+            await publication.updateOne({$pull: {likes: user}});
+            res.status(200).json({
+                ok: true,
+                message: 'like quitado correctamente'
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            ok:false,
+            message: 'Error al asignar like',
+            error: error
+        })
+    } 
+}
+
 
 module.exports = {
     createPublication,
     updatePublication,
     deletePublication,
     getUserPublications,
+    getUserLikedPublications,
     getPublicationsByPetType,
-    getPublication
+    getPublication,
+    handleLike
 }

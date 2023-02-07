@@ -19,13 +19,6 @@ const PublicationSchema = Schema({
         required: true
     },
     age: {
-        type: String
-    },
-    ageNumber: {
-        type: Number,
-        required: true
-    }, 
-    ageString: {
         type: String,
         required: true
     },
@@ -71,6 +64,10 @@ const PublicationSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    likes: {
+        type: Array,
+        default: []
     }
 
 });
