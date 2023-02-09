@@ -32,6 +32,7 @@ const createUser = async (req, res) => {
             ok: true,
             uid: user.id,
             name: user.name,
+            email: user.email,
             token
         })
     } catch (error) {
@@ -42,19 +43,6 @@ const createUser = async (req, res) => {
             message: 'Error - Hable con el administrador'
         });
     } 
-}
-
-const getUserInfo = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const user = await User.findById(userId);
-         
-    } catch (error) {
-        res.status(500).json({
-            ok: false,
-            message: 'Error al buscar al usuario'
-        })
-    }
 }
 
 const loginUser = async (req, res) => {
@@ -85,6 +73,7 @@ const loginUser = async (req, res) => {
             ok: true,
             uid: user.id,
             name: user.name,
+            email: user.email,
             token
         })
 

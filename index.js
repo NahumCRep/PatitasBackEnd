@@ -15,14 +15,14 @@ app.use(cors());
 app.use(express.static('public'));
 
 // body parse and read
-app.use(express.json({limit: '50mb'}));
+app.use(express.json({limit: '10mb'}));
 app.use(express.urlencoded({
     extended: true
 }));
 
 // routes
 app.use('/api/auth', require('./routes/auth.js'));
-// app.use('/api/pet', require('./routes/pet.js'));
+app.use('/api/user', require('./routes/user.js'));
 app.use('/api/publication', require('./routes/publication.js'));
 app.use('/api/img', require('./routes/cloudinary.js'));
 
