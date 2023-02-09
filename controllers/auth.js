@@ -44,6 +44,19 @@ const createUser = async (req, res) => {
     } 
 }
 
+const getUserInfo = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+         
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            message: 'Error al buscar al usuario'
+        })
+    }
+}
+
 const loginUser = async (req, res) => {
     const {email, password} = req.body;
     try {
