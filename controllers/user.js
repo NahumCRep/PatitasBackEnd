@@ -7,6 +7,7 @@ const getUserInfo = async (req, res) => {
     try {
         const userId = req.params.id;
         const user = await User.findById(userId);
+        
 
         if(!user){
             return res.status(400).json({
@@ -35,7 +36,7 @@ const updateUserInfo = async (req, res) => {
         const userId = req.params.id;
         const newUserData = req.body;
         const storedUser = await User.findById(userId);
-       
+
         // Validate if its password change
         let newPasswordData = {};
         if(req.body.password){
@@ -45,8 +46,8 @@ const updateUserInfo = async (req, res) => {
                 storedUser.password
             );
 
-            if(passwordValidation){
-                return res.status(400).json({
+            if(!passwordValidation){
+                return res.status(200).json({
                     ok: false,
                     message: 'la contraseña actual no es correcta'
                 });
@@ -58,22 +59,32 @@ const updateUserInfo = async (req, res) => {
             newPasswordData = { password: newPassword }
         }
 
+        // Validate that new email doesnt already exist with other user
+        if(newUserData.email){
+            const sameEmail = await User.find({_id: { $ne: userId }, email: newUserData.email})
+            if(sameEmail.length > 0){
+                return res.status(200).json({
+                    ok: false,
+                    message: 'El correo ya se encuentra registrado por otro usuario!'
+                })
+            }
+        }
 
+        // If its all right then....
         let message = '';
-        let user = {};
         if(newPasswordData.password){
-            user = await User.findByIdAndUpdate(userId, {$set: newPasswordData});
-            message = 'Contraseña actualizada correctamente!'
+            await User.findByIdAndUpdate(userId, {$set: newPasswordData});
+            message = 'Contraseña actualizada correctamente!'    
         }else {
-            user = await User.findByIdAndUpdate(userId, {$set: newUserData});
+            await User.findByIdAndUpdate(userId, {$set: {name: newUserData.name, email:newUserData.email}});
             message = 'Usuario actualizado correctamente!'
         }
 
-        res.status(400).json({
+        res.status(200).json({
             ok: true,
             message: message,
-            user
         })
+       
 
     } catch (error) {
         res.status(500).json({
