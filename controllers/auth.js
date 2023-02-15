@@ -1,7 +1,8 @@
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { generateJWT } = require('../helpers/jwt');
-const { sendEmail } = require('../helpers/email-gmail-api');
+const { sendEmail, sendResetPasswordEmail } = require('../helpers/email-gmail-api');
 // const { sendEmail } = require('../helpers/email-mailgun');
 
 const createUser = async (req, res) => {
@@ -26,7 +27,15 @@ const createUser = async (req, res) => {
 
         const token = await generateJWT(user.id, user.name);
 
-        await sendEmail(user.name, email);
+        const emailExtraOptions = {
+            text: 'Gracias por Registrarse en Patitas Web',
+            template: 'registration',
+            context: {
+                name: user.name
+            }
+        }
+
+        await sendEmail(email, 'Patitas Registro de Cuenta', emailExtraOptions);
 
         res.json({
             ok: true,
@@ -98,9 +107,95 @@ const renewToken = async (req, res) => {
     });
 }
 
+const forgotPassword = async (req, res) => {
+    const {email} = req.body;
+    try {
+        const requestingUser = await User.findOne({email: email});
+
+        if(!requestingUser){
+            return res.status(200).json({
+                ok: false,
+                message: 'El correo no pertenece a ningun usuario'
+            })
+        }
+
+        const token = await generateJWT(requestingUser._id, requestingUser.password);
+        const link = `${process.env.FRONTEND_HOST}/reset_password/${requestingUser._id}/${token}`;
+        
+        const emailExtraOptions = {
+            text: 'Cambio de Contraseña',
+            template: 'resetpassword',
+            context: {
+                link
+            }
+        }
+        const emailSended = await sendEmail(
+            email, 
+            'Patitas Reset Password', 
+            emailExtraOptions
+        );
+        
+        res.status(200).json({
+            ok:true,
+            message: 'correo enviado'
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: false,
+            message: 'Error - Hable con el administrador'
+        });
+    }
+}
+
+const resetPassword = async (req, res) => {
+    const {id, token} = req.params
+    const {password} = req.body
+    try {
+        if(!token || !id || !password){
+            return res.status(400).json({
+                ok: false,
+                message: 'Missing data'
+            })
+        }
+
+        const user = await User.findById(id)
+        
+        if(!user){
+            return res.status(400).json({
+                ok: false,
+                message: 'User not found'
+            })
+        }
+
+        const secret = process.env.SECRET_JWT_SEED
+        const verify = jwt.verify(token, secret)
+        
+
+        const salt = bcrypt.genSaltSync();
+        user.password = bcrypt.hashSync(password, salt);
+
+        await user.save();
+
+        res.status(200).json({
+            ok: true,
+            message: 'contraseña actualizada'
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: false,
+            error
+        })
+    }
+}
+
 
 module.exports = {
     createUser,
     loginUser,
-    renewToken
+    renewToken,
+    forgotPassword,
+    resetPassword
 }
