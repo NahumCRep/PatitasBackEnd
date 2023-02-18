@@ -262,6 +262,25 @@ const handleLike = async (req, res) => {
     } 
 }
 
+const getCounts = async (req, res) => {
+    try {
+        const availablePets = await Publication.countDocuments({is_adopted: false})
+        const adoptedPets = await Publication.countDocuments({is_adopted: true})
+
+        res.status(200).json({
+            ok: true,
+            available: availablePets,
+            adopted: adoptedPets
+        })
+
+    } catch (error) {
+        res.status(200).json({
+            ok: false,
+            message: 'Error Counting Publications'
+        })
+    }
+}
+
 
 module.exports = {
     createPublication,
@@ -271,5 +290,6 @@ module.exports = {
     getUserLikedPublications,
     getPublicationsByPetType,
     getPublication,
-    handleLike
+    handleLike,
+    getCounts
 }

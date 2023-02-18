@@ -7,7 +7,8 @@ const {
     getUserLikedPublications,
     getPublicationsByPetType,
     getPublication,
-    handleLike
+    handleLike,
+    getCounts
 } = require('../controllers/publication');
 
 const router = Router();
@@ -23,5 +24,6 @@ router.get('/user/:id', getUserPublications);
 router.get('/user/:id/likes', getUserLikedPublications);
 router.put('/update/:id', updatePublication);
 router.delete('/delete/:id', deletePublication);
+router.get('/counters/all', getCounts);
 
 module.exports = router;
