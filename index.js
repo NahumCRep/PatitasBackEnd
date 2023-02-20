@@ -27,5 +27,5 @@ app.use('/api/publication', require('./routes/publication.js'));
 app.use('/api/img', require('./routes/cloudinary.js'));
 
 app.listen(process.env.PORT, () => {
-    console.log(`Corriendo en Puerto ${ process.env.PORT}`)
+    console.log(`Corriendo en Puerto ${ process.env.PORT || 4000}`)
 })
