@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { generateJWT } = require('../helpers/jwt');
 const { sendEmail } = require('../helpers/email-gmail-api');
-// const { sendEmail } = require('../helpers/email-mailgun');
+
 
 const createUser = async (req, res) => {
     const {email, password} = req.body;
