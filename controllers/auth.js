@@ -1,15 +1,15 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const { generateJWT } = require('../helpers/jwt');
-const { sendEmail } = require('../helpers/email-gmail-api');
+import User from '../models/User';
+import { verify as _verify } from 'jsonwebtoken';
+import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
+import { generateJWT } from '../helpers/jwt';
+import { sendEmail } from '../helpers/email-gmail-api';
 
 
 const createUser = async (req, res) => {
     const {email, password} = req.body;
 
     try {
-        let user = await User.findOne({email});
+        let user = await findOne({email});
         if(user){
             return res.status(400).json({
                 ok:false,
@@ -20,8 +20,8 @@ const createUser = async (req, res) => {
         user = new User(req.body);
 
         // Encriptra contrasena
-        const salt = bcrypt.genSaltSync();
-        user.password = bcrypt.hashSync(password, salt);
+        const salt = genSaltSync();
+        user.password = hashSync(password, salt);
 
         await user.save();
 
@@ -58,7 +58,7 @@ const loginUser = async (req, res) => {
     const {email, password} = req.body;
     try {
         
-        let user = await User.findOne({email});
+        let user = await findOne({email});
 
         if(!user) {
             return res.status(400).json({
@@ -68,7 +68,7 @@ const loginUser = async (req, res) => {
         }
 
 
-        const passwordValidation = bcrypt.compareSync(password, user.password);
+        const passwordValidation = compareSync(password, user.password);
         if(!passwordValidation){
             return res.status(400).json({
                 ok: false,
@@ -110,7 +110,7 @@ const renewToken = async (req, res) => {
 const forgotPassword = async (req, res) => {
     const {email} = req.body;
     try {
-        const requestingUser = await User.findOne({email: email});
+        const requestingUser = await findOne({email: email});
 
         if(!requestingUser){
             return res.status(200).json({
@@ -159,7 +159,7 @@ const resetPassword = async (req, res) => {
             })
         }
 
-        const user = await User.findById(id)
+        const user = await findById(id)
         
         if(!user){
             return res.status(400).json({
@@ -169,11 +169,11 @@ const resetPassword = async (req, res) => {
         }
 
         const secret = process.env.SECRET_JWT_SEED
-        const verify = jwt.verify(token, secret)
+        const verify = _verify(token, secret)
         
 
-        const salt = bcrypt.genSaltSync();
-        user.password = bcrypt.hashSync(password, salt);
+        const salt = genSaltSync();
+        user.password = hashSync(password, salt);
 
         await user.save();
 
@@ -192,7 +192,7 @@ const resetPassword = async (req, res) => {
 }
 
 
-module.exports = {
+export default {
     createUser,
     loginUser,
     renewToken,
