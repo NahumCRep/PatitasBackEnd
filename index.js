@@ -21,7 +21,7 @@ app.use(express.urlencoded({
 }));
 
 // routes
-app.use('/api/auth', require('./routes/auth.js'));
+// app.use('/api/auth', require('./routes/auth.js'));
 app.use('/api/user', require('./routes/user.js'));
 app.use('/api/publication', require('./routes/publication.js'));
 app.use('/api/img', require('./routes/cloudinary.js'));
