@@ -30,4 +30,4 @@ router.post('/forgot_password',[
 
 router.put('/reset_password/:id/:token', resetPassword);
 
-export default router;
+module.exports = router;

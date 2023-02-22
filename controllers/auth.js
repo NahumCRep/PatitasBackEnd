@@ -192,7 +192,7 @@ const resetPassword = async (req, res) => {
 }
 
 
-export default {
+module.exports = {
     createUser,
     loginUser,
     renewToken,
