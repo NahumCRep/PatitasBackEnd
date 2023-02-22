@@ -1,8 +1,8 @@
-import User from '../models/User';
-import { verify as _verify } from 'jsonwebtoken';
-import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
-import { generateJWT } from '../helpers/jwt';
-import { sendEmail } from '../helpers/email-gmail-api';
+const User = require('../models/User');
+const { verify } = require('jsonwebtoken');
+const { genSaltSync, hashSync, compareSync } = require('bcryptjs');
+const { generateJWT } = require('../helpers/jwt');
+const { sendEmail } = require('../helpers/email-gmail-api');
 
 
 const createUser = async (req, res) => {
@@ -169,7 +169,7 @@ const resetPassword = async (req, res) => {
         }
 
         const secret = process.env.SECRET_JWT_SEED
-        const verify = _verify(token, secret)
+        const verify = verify(token, secret)
         
 
         const salt = genSaltSync();
